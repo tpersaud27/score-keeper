@@ -1,74 +1,40 @@
-// Selecting player one button
-const playerOneButton = document.querySelector('#player-one-button');
-// Selecting player two button
-const playerTwoButton = document.querySelector('#player-two-button');
+// This object will hold all properties for player 1
+const player1 = {
+    score: 0,
+    button: document.querySelector('#player-one-button'),
+    display: document.querySelector('#player-one-display')
+}
+
+// This object will hold all properties for player 2
+const player2 = {
+    score: 0,
+    button: document.querySelector('#player-two-button'),
+    display: document.querySelector('#player-two-display')
+}
+
+const players = [player1, player2];
+
 // Selecting the reset button
 const resetButton = document.querySelector('#reset-button')
-
-// Selecting the score display for player one (Note: this is just the span element)
-const playerOneDisplay = document.querySelector('#player-one-display');
-// Selecting the score display for player two (Note: this is just the span element)
-const playerTwoDisplay = document.querySelector('#player-two-display');
-
 // Selecting the winning score select menu
 const winningScoreSelect = document.querySelector('#playTo');
 
-
-// Player one score
-let p1Score = 0;
-// Player two score
-let p2Score = 0;
 // This is the score where the game will end
 let winningScore = 3;
 // This will keep track if the game is over
 // Once this is true, the game will stop. Can be reset using reset button
 let isGameOver = false;
 
-
 // This event listener will update the player one score if clicked
-playerOneButton.addEventListener('click', (event) => {
+player1.button.addEventListener('click', function(){
 
-    // If the game is not over
-    if (!isGameOver) {
-        // We will increment the score
-        p1Score++;
-        // Check if the winning score is achieved
-        if (p1Score === winningScore) {
-            // if winning score is achieved we must change isGameOver to true
-            isGameOver = true;
-            // We add the coloring to the scores
-            playerOneDisplay.classList.add("has-text-success");
-            playerTwoDisplay.classList.add("has-text-danger");
-            // Disable button
-            playerOneButton.disabled = true;
-        }
-        // Now we set the innerHTML to the new score
-        playerOneDisplay.innerHTML = p1Score;
-    }
-
+    updateScores(player1, player2);
 })
 
 // This event listener will update the player two score if clicked
-playerTwoButton.addEventListener('click', (event) => {
+player2.button.addEventListener('click', function(){
 
-    // If the game is not over
-    if (!isGameOver) {
-        // We will increment the score
-        p2Score++;
-        // Check if the winning score is achieved
-        if (p2Score === winningScore) {
-            // if winning score is achieved we must change isGameOver to true
-            isGameOver = true;
-            // We add the coloring to the score
-            playerTwoDisplay.classList.add("has-text-success");
-            playerOneDisplay.classList.add("has-text-danger");
-            // Disable button
-            playerTwoButton.disabled = true;
-
-        }
-        // Now we set the innerHTML to the new score
-        playerTwoDisplay.innerHTML = p2Score;
-    }
+    updateScores(player2, player1);
 
 })
 
@@ -81,25 +47,44 @@ winningScoreSelect.addEventListener('change', function (event) {
     
     winningScore = parseInt(this.value);    
     reset();
+
 })
+
+// This generic function will store the logic for the game
+function updateScores(player, opponent) {
+    // If the game is not over
+    if (!isGameOver) {
+        // We will increment the score
+        player.score++;
+        // Check if the winning score is achieved
+        if (player.score === winningScore) {
+            // if winning score is achieved we must change isGameOver to true
+            isGameOver = true;
+            // We add the coloring to the scores
+            player.display.classList.add("has-text-success");
+            opponent.display.classList.add("has-text-danger");
+            // Disable button
+            player.button.disabled = true;
+            opponent.button.disabled = true;
+        }
+        // Now we set the innerHTML to the new score
+        player.display.innerHTML = player.score;
+    }
+}
 
 // This function will reset the board information
 function reset() {
-    
-    // reset scores, displays, and styles
-    p1Score = 0;
-    playerOneDisplay.innerHTML = 0;
-    playerOneDisplay.classList.remove('has-text-success', 'has-text-danger')
-
-    p2Score = 0;
-    playerTwoDisplay.innerHTML = 0;
-    playerTwoDisplay.classList.remove('has-text-success', 'has-text-danger')
 
     // reset isGameOver
     isGameOver = false;
     
-    // Undisable the buttons
-    playerOneButton.disabled = false;
-    playerTwoButton.disabled = false;
-   
+    for (player of players) {
+        // reset scores, displays, and styles
+        player.score = 0;
+        player.display.innerHTML = 0;
+        // This will remove which ever style is active
+        player.display.classList.remove('has-text-success', 'has-text-danger')
+        // Undisable the buttons
+        player.button.disabled = false;
+    }
 }
